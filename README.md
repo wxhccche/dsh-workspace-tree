@@ -25,6 +25,12 @@ DSH ships a sidebar that lists every workspace together with its sessions. Works
 
 ## Installation
 
+### From npm
+
+```sh
+dsh plugin install @wxhccc/dsh-workspace-tree
+```
+
 ### From GitHub
 
 ```sh
@@ -38,14 +44,14 @@ git clone git@github.com:wxhccche/dsh-workspace-tree.git
 dsh plugin install /absolute/path/to/dsh-workspace-tree
 ```
 
-The package name is `dsh-workspace-tree`, the same as the repository, so the client module id, the bundle patch and the plugin page key all resolve to one identifier. The plugin needs no build at install time: `client.js` is shipped pre-built.
+The package name is `@wxhccc/dsh-workspace-tree`, so the client module id, the bundle patch and the plugin page key all resolve to one identifier. Three install sources are interchangeable; the npm one needs no Git access. The plugin needs no build at install time: `client.js` is shipped pre-built.
 
 ### Reloading after a change
 
 The client bundle is loaded when the profile starts. After editing `client.js`, remove and reinstall the bundle, then reload the page:
 
 ```text
-plugin_manager remove_bundle  target: dsh-workspace-tree
+plugin_manager remove_bundle  target: @wxhccc/dsh-workspace-tree
 plugin_manager install_bundle target: <absolute path to the plugin directory>
 ```
 
@@ -145,6 +151,15 @@ npm test         # Host regression tests only
 | `scripts/audit-i18n.mjs` | Fails on unused or missing locale keys. |
 
 The client bundle registers itself through `window.__ModuleLoader__.load({ id, factory(require) })` and builds its DOM with `React.createElement`. DSH's module loader only resolves whole bundles, so the sources are bundled with esbuild into a single file rather than split at runtime. The host half is a plain ESM module exporting `inject` and `apply`, which registers routes with `ctx.webServer.register(...)` inside `ctx.effect(...)` so they are disposed with the plugin.
+
+### Publishing
+
+```sh
+npm version <patch|minor|major>   # bumps package.json and creates the tag
+npm publish                       # publishes @wxhccc/dsh-workspace-tree
+```
+
+`prepublishOnly` rebuilds `client.js` and runs `npm run check` before the tarball is packed, so a stale bundle or a failing test blocks the release. `publishConfig.access` is `public` because scoped packages default to restricted. Add the matching `CHANGELOG.md` entry before tagging.
 
 Formatting follows the repository `.prettierrc`: no semicolons, single quotes, no trailing commas.
 

@@ -1,7 +1,7 @@
 {
-  "name": "dsh-workspace-tree",
-  "version": "1.1.1",
-  "private": true,
+  "name": "@wxhccc/dsh-workspace-tree",
+  "version": "1.0.0",
+  "private": false,
   "description": "Organizes DSH sidebar sessions into nested, user-defined folders with drag-and-drop grouping, cross-workspace moves and recoverable session deletion.",
   "type": "module",
   "exports": {
@@ -18,16 +18,23 @@
     "lib",
     "src",
     "build.mjs",
+    "scripts",
+    "test",
     "locale/en.json",
     "locale/zh.json",
     "README.md",
-    "README.zh.md"
+    "README.zh.md",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "build": "node build.mjs",
     "check": "node --check index.js && node --check client.js && node --test test/host.test.mjs test/client.test.mjs && node scripts/audit-i18n.mjs",
     "test": "node --test test/host.test.mjs test/client.test.mjs",
-    "audit:i18n": "node scripts/audit-i18n.mjs"
+    "audit:i18n": "node scripts/audit-i18n.mjs",
+    "prepublishOnly": "npm run build && npm run check"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "engines": {
     "node": ">=20.11"

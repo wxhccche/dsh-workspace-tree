@@ -25,6 +25,12 @@ DSH 自带的侧栏把每个工作区与其会话平铺在一起。Workspace Tre
 
 ## 安装
 
+### 从 npm 安装
+
+```sh
+dsh plugin install @wxhccc/dsh-workspace-tree
+```
+
 ### 从 GitHub 安装
 
 ```sh
@@ -38,14 +44,14 @@ git clone git@github.com:wxhccche/dsh-workspace-tree.git
 dsh plugin install /absolute/path/to/dsh-workspace-tree
 ```
 
-包名为 `dsh-workspace-tree`，与仓库同名，因此客户端模块 id、bundle patch 与插件设置页的键都指向同一个标识。安装时无需构建：`client.js` 已随包提供。
+包名为 `@wxhccc/dsh-workspace-tree`，因此客户端模块 id、bundle patch 与插件设置页的键都指向同一个标识。三种安装源可以互换；npm 方式不需要 Git 访问。安装时无需构建：`client.js` 已随包提供。
 
 ### 修改后的重新加载
 
 浏览器端产物在 profile 启动时加载。修改 `client.js` 后需要移除并重新安装 bundle，然后刷新页面：
 
 ```text
-plugin_manager remove_bundle  target: dsh-workspace-tree
+plugin_manager remove_bundle  target: @wxhccc/dsh-workspace-tree
 plugin_manager install_bundle target: <插件目录的绝对路径>
 ```
 
@@ -145,6 +151,15 @@ npm test         # 只跑 Host 回归测试
 | `scripts/audit-i18n.mjs` | 发现未使用或缺失的文案键时报错。 |
 
 客户端 bundle 通过 `window.__ModuleLoader__.load({ id, factory(require) })` 自我注册，并用 `React.createElement` 构建 DOM。DSH 的模块加载器只解析完整 bundle，因此源码用 esbuild 打包成单文件，而不是在运行时拆分。Host 半边是普通的 ESM 模块，导出 `inject` 与 `apply`，在 `ctx.effect(...)` 内调用 `ctx.webServer.register(...)` 注册路由，随插件一同销毁。
+
+### 发布
+
+```sh
+npm version <patch|minor|major>   # 更新 package.json 并打标签
+npm publish                       # 发布 @wxhccc/dsh-workspace-tree
+```
+
+`prepublishOnly` 会在打包前重新构建 `client.js` 并执行 `npm run check`，因此产物过期或测试失败都会阻止发布。`publishConfig.access` 设为 `public`，因为作用域包的默认可见性是 restricted。打标签前记得补上对应的 `CHANGELOG.md` 条目。
 
 格式遵循仓库中的 `.prettierrc`：不加分号、单引号、无尾逗号。
 
