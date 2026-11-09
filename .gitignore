@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# Editor and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Tooling caches
+.eslintcache
+.prettiercache
+coverage/
+
+# Local packaging output
+*.tgz
+dist/

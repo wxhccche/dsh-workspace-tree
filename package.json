@@ -1,0 +1,60 @@
+{
+  "name": "@local/workspace-tree",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Organizes DSH sidebar sessions into nested, user-defined folders with drag-and-drop grouping, cross-workspace moves and recoverable session deletion.",
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "icon.svg",
+    "locale/en.json",
+    "locale/zh.json",
+    "README.md"
+  ],
+  "scripts": {
+    "check": "node --check index.js && node --check client.js"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "sidebar",
+    "workspace",
+    "session",
+    "folders"
+  ],
+  "author": "wxhccche",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wxhccche/dsh-workspace-tree.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wxhccche/dsh-workspace-tree/issues"
+  },
+  "homepage": "https://github.com/wxhccche/dsh-workspace-tree#readme",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-slots",
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-workspace",
+        "@deepseek-ai/dsh-client-ui-sidebar",
+        "@deepseek-ai/dsh-client-ui-layout"
+      ]
+    }
+  }
+}
