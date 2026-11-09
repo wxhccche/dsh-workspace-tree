@@ -6,13 +6,37 @@ This document describes how Workspace Tree attaches to DSH, which private contra
 
 | File | Role |
 |---|---|
-| `client.js` | The whole user interface. Registers itself with `window.__ModuleLoader__.load({ id, factory(require) })`, builds the DOM with `React.createElement`, and loads `Menu`, the icons and `writeClipboard` from `@deepseek-ai/dsh-client-ui-primitives`. |
-| `index.js` | Host half. A plain ESM module exporting `inject` and `apply`; registers four `webServer` routes. |
+| `src/client/` | Client sources. `index.js` is the entry, `apply.js` registers locale, styles and slots, `platform.js` re-exports `react` and the primitives, `components/` holds the rows, `components/region/` holds the selectors, menus and views behind the sidebar `Region`. |
+| `client.js` | Generated bundle, committed. Registers itself with `window.__ModuleLoader__.load({ id, factory(require) })` and is built by `build.mjs`; edit `src/client` instead. |
+| `index.js` | Host entry. A plain ESM module exporting `inject` and `apply`; declares the four routes and delegates to `lib/routes`. |
+| `lib/http.js` | Shared transport helpers: session id pattern, body limit, cross-site guard, JSON reader and writer. |
+| `lib/paths.js` | Filesystem layout: sessions root, session directory lookup, move with cross-volume fallback, projection-cache purge, trash size, live-session check. |
+| `lib/routes/sessions.js` | `handleDelete` and `handleModel` (`pickModel`). |
+| `lib/routes/trash.js` | `handleTrashList` and `handleTrashClear`. |
+| `build.mjs` | esbuild wrapper: bundles `src/client/index.js` as an IIFE with `react` and the primitives external, then wraps it in the module-loader factory and writes `client.js`. |
+| `test/host.test.mjs` | Route-level regression tests driven through a stubbed plugin context and a temporary `DSH_HOME`. |
+| `scripts/audit-i18n.mjs` | Locale audit: unused keys and unresolved `t('…')` calls fail the check. |
 | `cordis.patch.yml` | Bundle patch: `- insert: - id: workspace-tree / name: '@local/workspace-tree'`. |
 | `package.json` | `dsh.client.inject` lists the five client modules the bundle needs; `files` decides what is distributed. |
 | `locale/{en,zh}.json` | Title and description shown in the plugin list. |
 | `icon.svg` | Plugin icon. |
 | `README.md`, `README.zh.md` | User documentation. |
+
+## Build
+
+DSH's client module loader resolves whole bundles only: a `client.js` file may not synchronously `require` a relative sibling, and `require.async` is reserved for compiler-generated chunks served by the host. The client therefore ships as one generated file. `build.mjs` bundles `src/client/index.js` with esbuild, keeping `react` and `@deepseek-ai/dsh-client-ui-primitives` external so they resolve through the factory's `require` argument at run time, then emits:
+
+```js
+window.__ModuleLoader__.load({
+  id: '@local/workspace-tree',
+  factory(require) {
+    /* …bundled IIFE… */
+    return __workspaceTree
+  }
+})
+```
+
+`client.js` is committed so `dsh plugin install github:…` needs no build step. After changing `src/client`, run `npm run build` and commit the regenerated file.
 
 ## Slot takeover
 
@@ -120,7 +144,7 @@ Capabilities DSH does not expose, and which the plugin therefore works around:
 
 ## Verifying a change
 
-1. `npm run check` — `node --check` on both entry points; confirm the locale files still parse.
+1. `npm run check` — syntax checks both entry points, runs the Host regression tests, and audits the locale keys. After touching `src/client`, run `npm run build` first and commit the regenerated `client.js`.
 2. Reinstall the bundle: `plugin_manager remove_bundle` followed by `install_bundle` with the absolute directory. The result must report `application: "applied"` and `warnings: []`; installing again without removing first fails with `already-installed`.
 3. Inspect the slot: `cordis_inspect_query` with platform `client`, provider `Slots`, method `listSubTree`, input `{ "root": "sidebar.workspaces" }`. The occupants should be `[{ priority: -1, active: true }, { priority: 0, active: false }]`.
 4. Probe a route: `Invoke-WebRequest http://127.0.0.1:<port>/workspace-tree/trash`.

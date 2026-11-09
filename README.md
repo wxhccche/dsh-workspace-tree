@@ -127,10 +127,23 @@ See [docs/architecture.md](./docs/architecture.md) for the full contract: which 
 ## Development
 
 ```sh
-npm run check   # node --check on both entry points
+npm install      # installs esbuild, the only dev dependency
+npm run build    # bundles src/client into client.js
+npm run check    # syntax, Host regression tests and locale audit
+npm test         # Host regression tests only
 ```
 
-The client is a single file that registers itself through `window.__ModuleLoader__.load({ id, factory(require) })` and builds its DOM with `React.createElement`. The host half is a plain ESM module exporting `inject` and `apply`, which registers routes with `ctx.webServer.register(...)` inside `ctx.effect(...)` so they are disposed with the plugin.
+| Path | Purpose |
+|---|---|
+| `index.js` | Host entry point: route table, registration and `apply`. |
+| `client.js` | Generated browser bundle. Committed, so installing needs no build step; never edit it by hand. |
+| `src/client/` | Client sources: entry, locale dictionaries, styles, store, components, and the `Region` selectors. |
+| `lib/` | Host helpers (`http`, `paths`) and the route handlers. |
+| `build.mjs` | esbuild wrapper that wraps the bundle in a `window.__ModuleLoader__.load` factory. |
+| `test/host.test.mjs` | Route-level tests that run against a temporary `DSH_HOME`. |
+| `scripts/audit-i18n.mjs` | Fails on unused or missing locale keys. |
+
+The client bundle registers itself through `window.__ModuleLoader__.load({ id, factory(require) })` and builds its DOM with `React.createElement`. DSH's module loader only resolves whole bundles, so the sources are bundled with esbuild into a single file rather than split at runtime. The host half is a plain ESM module exporting `inject` and `apply`, which registers routes with `ctx.webServer.register(...)` inside `ctx.effect(...)` so they are disposed with the plugin.
 
 Formatting follows the repository `.prettierrc`: no semicolons, single quotes, no trailing commas.
 

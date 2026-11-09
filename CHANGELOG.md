@@ -2,6 +2,23 @@
 
 All notable changes to this project are documented in this file. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-11-09
+
+Restructured as a standalone project. No behaviour change for users.
+
+### Added
+
+- Client sources under `src/client`, split into locale, styles, store, helpers, row components, and a `Region` layer (`selectors`, `menus`, `views`) that keeps the component itself to state and handlers.
+- `build.mjs`, an esbuild wrapper that bundles `src/client` into the committed `client.js`, because DSH's module loader cannot resolve relative client bundles.
+- Host sources under `lib`: `http` and `paths` helpers plus `routes/sessions` and `routes/trash`; `index.js` is now only a composition root.
+- `test/host.test.mjs`, six route-level regression tests that run against a temporary `DSH_HOME` with `node --test`.
+- `scripts/audit-i18n.mjs` and the `build`, `test` and `audit:i18n` scripts; `npm run check` runs all of them.
+- `esbuild` as the only development dependency.
+
+### Fixed
+
+- A missing `<DSH_HOME>/sessions` directory was reported as `scan-failed` instead of `not-found` when deleting a session.
+
 ## [1.0.0] - 2026-11-09
 
 First public release.

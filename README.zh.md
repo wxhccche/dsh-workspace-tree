@@ -127,10 +127,23 @@ Workspace Tree 为 `sidebar.workspaces` 槽位注册了一个替代实现。sing
 ## 开发
 
 ```sh
-npm run check   # 对两个入口跑 node --check
+npm install      # 只装一个开发依赖 esbuild
+npm run build    # 把 src/client 打包成 client.js
+npm run check    # 语法检查 + Host 回归测试 + 文案键审计
+npm test         # 只跑 Host 回归测试
 ```
 
-客户端是单个文件，通过 `window.__ModuleLoader__.load({ id, factory(require) })` 自我注册，并用 `React.createElement` 构建 DOM。Host 半边是普通的 ESM 模块，导出 `inject` 与 `apply`，在 `ctx.effect(...)` 内调用 `ctx.webServer.register(...)` 注册路由，随插件一同销毁。
+| 路径 | 用途 |
+|---|---|
+| `index.js` | Host 入口：路由表、注册与 `apply`。 |
+| `client.js` | 生成的浏览器 bundle。已提交，安装时无需构建，请勿手工修改。 |
+| `src/client/` | 客户端源码：入口、文案字典、样式、存储、组件与 `Region` 的 selector。 |
+| `lib/` | Host 侧工具（`http`、`paths`）与路由处理函数。 |
+| `build.mjs` | esbuild 包装脚本，把 bundle 包进 `window.__ModuleLoader__.load` 工厂。 |
+| `test/host.test.mjs` | 基于临时 `DSH_HOME` 的路由级测试。 |
+| `scripts/audit-i18n.mjs` | 发现未使用或缺失的文案键时报错。 |
+
+客户端 bundle 通过 `window.__ModuleLoader__.load({ id, factory(require) })` 自我注册，并用 `React.createElement` 构建 DOM。DSH 的模块加载器只解析完整 bundle，因此源码用 esbuild 打包成单文件，而不是在运行时拆分。Host 半边是普通的 ESM 模块，导出 `inject` 与 `apply`，在 `ctx.effect(...)` 内调用 `ctx.webServer.register(...)` 注册路由，随插件一同销毁。
 
 格式遵循仓库中的 `.prettierrc`：不加分号、单引号、无尾逗号。
 
