@@ -12,6 +12,7 @@ Restructured as a standalone project. No behaviour change for users.
 - `build.mjs`, an esbuild wrapper that bundles `src/client` into the committed `client.js`, because DSH's module loader cannot resolve relative client bundles.
 - Host sources under `lib`: `http` and `paths` helpers plus `routes/sessions` and `routes/trash`; `index.js` is now only a composition root.
 - `test/host.test.mjs`, six route-level regression tests that run against a temporary `DSH_HOME` with `node --test`.
+- `test/client.test.mjs`, five bundle-level tests that render the region with stub platform modules and pin slot registration, locale keys, row visibility and menu targets.
 - `scripts/audit-i18n.mjs` and the `build`, `test` and `audit:i18n` scripts; `npm run check` runs all of them.
 - `esbuild` as the only development dependency.
 

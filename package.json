@@ -25,8 +25,8 @@
   ],
   "scripts": {
     "build": "node build.mjs",
-    "check": "node --check index.js && node --check client.js && node --test test/host.test.mjs && node scripts/audit-i18n.mjs",
-    "test": "node --test test/host.test.mjs",
+    "check": "node --check index.js && node --check client.js && node --test test/host.test.mjs test/client.test.mjs && node scripts/audit-i18n.mjs",
+    "test": "node --test test/host.test.mjs test/client.test.mjs",
     "audit:i18n": "node scripts/audit-i18n.mjs"
   },
   "engines": {

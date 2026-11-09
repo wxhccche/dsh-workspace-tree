@@ -141,6 +141,7 @@ npm test         # Host regression tests only
 | `lib/` | Host helpers (`http`, `paths`) and the route handlers. |
 | `build.mjs` | esbuild wrapper that wraps the bundle in a `window.__ModuleLoader__.load` factory. |
 | `test/host.test.mjs` | Route-level tests that run against a temporary `DSH_HOME`. |
+| `test/client.test.mjs` | Renders the built bundle outside DSH with stub platform modules and pins slot registration, locale keys and row visibility. |
 | `scripts/audit-i18n.mjs` | Fails on unused or missing locale keys. |
 
 The client bundle registers itself through `window.__ModuleLoader__.load({ id, factory(require) })` and builds its DOM with `React.createElement`. DSH's module loader only resolves whole bundles, so the sources are bundled with esbuild into a single file rather than split at runtime. The host half is a plain ESM module exporting `inject` and `apply`, which registers routes with `ctx.webServer.register(...)` inside `ctx.effect(...)` so they are disposed with the plugin.

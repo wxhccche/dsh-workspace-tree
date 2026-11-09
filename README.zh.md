@@ -141,6 +141,7 @@ npm test         # 只跑 Host 回归测试
 | `lib/` | Host 侧工具（`http`、`paths`）与路由处理函数。 |
 | `build.mjs` | esbuild 包装脚本，把 bundle 包进 `window.__ModuleLoader__.load` 工厂。 |
 | `test/host.test.mjs` | 基于临时 `DSH_HOME` 的路由级测试。 |
+| `test/client.test.mjs` | 用桩模块在 DSH 之外渲染构建产物，锁定插槽注册、文案键与会话可见性规则。 |
 | `scripts/audit-i18n.mjs` | 发现未使用或缺失的文案键时报错。 |
 
 客户端 bundle 通过 `window.__ModuleLoader__.load({ id, factory(require) })` 自我注册，并用 `React.createElement` 构建 DOM。DSH 的模块加载器只解析完整 bundle，因此源码用 esbuild 打包成单文件，而不是在运行时拆分。Host 半边是普通的 ESM 模块，导出 `inject` 与 `apply`，在 `ctx.effect(...)` 内调用 `ctx.webServer.register(...)` 注册路由，随插件一同销毁。

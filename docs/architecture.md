@@ -15,6 +15,7 @@ This document describes how Workspace Tree attaches to DSH, which private contra
 | `lib/routes/trash.js` | `handleTrashList` and `handleTrashClear`. |
 | `build.mjs` | esbuild wrapper: bundles `src/client/index.js` as an IIFE with `react` and the primitives external, then wraps it in the module-loader factory and writes `client.js`. |
 | `test/host.test.mjs` | Route-level regression tests driven through a stubbed plugin context and a temporary `DSH_HOME`. |
+| `test/client.test.mjs` | Executes the built bundle with stub `react` and primitives, then renders the region to pin slot registration, locale keys, row visibility and menu targets. |
 | `scripts/audit-i18n.mjs` | Locale audit: unused keys and unresolved `t('…')` calls fail the check. |
 | `cordis.patch.yml` | Bundle patch: `- insert: - id: workspace-tree / name: '@local/workspace-tree'`. |
 | `package.json` | `dsh.client.inject` lists the five client modules the bundle needs; `files` decides what is distributed. |
