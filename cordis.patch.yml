@@ -1,3 +1,3 @@
 - insert:
     - id: workspace-tree
-      name: '@local/workspace-tree'
+      name: 'dsh-workspace-tree'

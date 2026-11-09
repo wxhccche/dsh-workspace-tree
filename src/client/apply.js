@@ -36,7 +36,8 @@ export function apply(ctx) {
   )
   // Plugin page: render this configuration on the plugin's own page under Plugins.
   // The page keys entries by package name, but register the patch id as well to be safe.
-  for (const key of ['@local/workspace-tree', 'workspace-tree']) {
+  // `__PACKAGE_NAME__` is replaced at build time with the name from package.json.
+  for (const key of [__PACKAGE_NAME__, 'workspace-tree']) {
     ctx.slots.inject('plugins.bundle.config', () =>
       ctx.slots.register(
         { name: 'plugins.bundle.config', key, locale: NS, inject: () => ({ sessions: ctx.sessions }) },

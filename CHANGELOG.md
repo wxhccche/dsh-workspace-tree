@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented in this file. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-11-09
+
+### Changed
+
+- Package renamed from `@local/workspace-tree` to `dsh-workspace-tree`, matching the repository. An existing profile that links the directory has to drop the old entry and install the bundle again.
+- The client module id, the bundle patch name and the plugin page key now all come from the package name: `build.mjs` reads it from `package.json` and replaces `__PACKAGE_NAME__` in the client sources.
+
 ## [1.1.0] - 2026-11-09
 
 Restructured as a standalone project. No behaviour change for users.

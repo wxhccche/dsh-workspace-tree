@@ -17,7 +17,7 @@ This document describes how Workspace Tree attaches to DSH, which private contra
 | `test/host.test.mjs` | Route-level regression tests driven through a stubbed plugin context and a temporary `DSH_HOME`. |
 | `test/client.test.mjs` | Executes the built bundle with stub `react` and primitives, then renders the region to pin slot registration, locale keys, row visibility and menu targets. |
 | `scripts/audit-i18n.mjs` | Locale audit: unused keys and unresolved `t('…')` calls fail the check. |
-| `cordis.patch.yml` | Bundle patch: `- insert: - id: workspace-tree / name: '@local/workspace-tree'`. |
+| `cordis.patch.yml` | Bundle patch: `- insert: - id: workspace-tree / name: 'dsh-workspace-tree'`. |
 | `package.json` | `dsh.client.inject` lists the five client modules the bundle needs; `files` decides what is distributed. |
 | `locale/{en,zh}.json` | Title and description shown in the plugin list. |
 | `icon.svg` | Plugin icon. |
@@ -29,7 +29,7 @@ DSH's client module loader resolves whole bundles only: a `client.js` file may n
 
 ```js
 window.__ModuleLoader__.load({
-  id: '@local/workspace-tree',
+  id: 'dsh-workspace-tree',
   factory(require) {
     /* …bundled IIFE… */
     return __workspaceTree
@@ -75,7 +75,7 @@ The configuration block is registered twice, under the package name and under th
 
 ```js
 ctx.slots.inject('sidebar', () => {
-  ctx.slots.register({ name: 'plugins.bundle.config', key: '@local/workspace-tree', ... }, ConfigPanel)
+  ctx.slots.register({ name: 'plugins.bundle.config', key: 'dsh-workspace-tree', ... }, ConfigPanel)
   ctx.slots.register({ name: 'plugins.bundle.config', key: 'workspace-tree', ... }, ConfigPanel)
 })
 ```

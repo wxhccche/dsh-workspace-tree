@@ -10,10 +10,14 @@
  * the instances the app already runs.
  */
 import { build } from 'esbuild'
-import { writeFile } from 'node:fs/promises'
+import { readFile, writeFile } from 'node:fs/promises'
 
 const ENTRY = 'src/client/index.js'
 const OUTPUT = 'client.js'
+
+// The module id must match the package name: DSH resolves the client bundle of
+// a plugin by that name, and the config slot is keyed by it as well.
+const pkg = JSON.parse(await readFile('package.json', 'utf8'))
 
 const result = await build({
   entryPoints: [ENTRY],
@@ -23,6 +27,7 @@ const result = await build({
   platform: 'browser',
   target: ['chrome110'],
   external: ['react', '@deepseek-ai/dsh-client-ui-primitives'],
+  define: { __PACKAGE_NAME__: JSON.stringify(pkg.name) },
   legalComments: 'none',
   write: false
 })
@@ -35,7 +40,7 @@ const indented = bundle
 
 const output = `/* Generated from src/client by build.mjs — do not edit directly. */
 window.__ModuleLoader__.load({
-  id: '@local/workspace-tree',
+  id: ${JSON.stringify(pkg.name)},
   factory(require) {
 ${indented}
 

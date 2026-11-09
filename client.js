@@ -1,6 +1,6 @@
 /* Generated from src/client by build.mjs — do not edit directly. */
 window.__ModuleLoader__.load({
-  id: '@local/workspace-tree',
+  id: "dsh-workspace-tree",
   factory(require) {
       var __workspaceTree = (() => {
         var __create = Object.create;
@@ -1902,7 +1902,7 @@ window.__ModuleLoader__.load({
               Region
             )
           );
-          for (const key of ["@local/workspace-tree", "workspace-tree"]) {
+          for (const key of ["dsh-workspace-tree", "workspace-tree"]) {
             ctx.slots.inject(
               "plugins.bundle.config",
               () => ctx.slots.register(

@@ -204,7 +204,7 @@ const collect = (tree, names) => {
 test('the bundle registers the plugin module and its slots', async () => {
   const { registration, module, registrations } = await loadBundle()
 
-  assert.equal(registration.id, '@local/workspace-tree')
+  assert.equal(registration.id, 'dsh-workspace-tree')
   assert.deepEqual(module.inject, ['slots', 'locale', 'uiWorkspace', 'workspaces', 'sessions'])
   assert.equal(typeof module.apply, 'function')
 
@@ -215,7 +215,7 @@ test('the bundle registers the plugin module and its slots', async () => {
   const configKeys = registrations
     .filter((item) => item.config.name === 'plugins.bundle.config')
     .map((item) => item.config.key)
-  assert.deepEqual(configKeys, ['@local/workspace-tree', 'workspace-tree'])
+  assert.deepEqual(configKeys, ['dsh-workspace-tree', 'workspace-tree'])
 })
 
 test('the locale dictionaries define the keys the region uses', async () => {

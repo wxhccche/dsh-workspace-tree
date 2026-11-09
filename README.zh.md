@@ -38,14 +38,14 @@ git clone git@github.com:wxhccche/dsh-workspace-tree.git
 dsh plugin install /absolute/path/to/dsh-workspace-tree
 ```
 
-本包有意保留 `@local/workspace-tree` 这个包名。以目录链接方式安装的 profile 仍在引用该名称，改名会破坏已有条目。
+包名为 `dsh-workspace-tree`，与仓库同名，因此客户端模块 id、bundle patch 与插件设置页的键都指向同一个标识。安装时无需构建：`client.js` 已随包提供。
 
 ### 修改后的重新加载
 
 浏览器端产物在 profile 启动时加载。修改 `client.js` 后需要移除并重新安装 bundle，然后刷新页面：
 
 ```text
-plugin_manager remove_bundle  target: @local/workspace-tree
+plugin_manager remove_bundle  target: dsh-workspace-tree
 plugin_manager install_bundle target: <插件目录的绝对路径>
 ```
 

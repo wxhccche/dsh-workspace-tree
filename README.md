@@ -38,14 +38,14 @@ git clone git@github.com:wxhccche/dsh-workspace-tree.git
 dsh plugin install /absolute/path/to/dsh-workspace-tree
 ```
 
-The package intentionally keeps the name `@local/workspace-tree`. Installations that link the directory keep referencing that name, and renaming the package would break an existing profile entry.
+The package name is `dsh-workspace-tree`, the same as the repository, so the client module id, the bundle patch and the plugin page key all resolve to one identifier. The plugin needs no build at install time: `client.js` is shipped pre-built.
 
 ### Reloading after a change
 
 The client bundle is loaded when the profile starts. After editing `client.js`, remove and reinstall the bundle, then reload the page:
 
 ```text
-plugin_manager remove_bundle  target: @local/workspace-tree
+plugin_manager remove_bundle  target: dsh-workspace-tree
 plugin_manager install_bundle target: <absolute path to the plugin directory>
 ```
 
