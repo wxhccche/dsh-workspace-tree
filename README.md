@@ -60,7 +60,7 @@ plugin_manager install_bundle target: <absolute path to the plugin directory>
 
 ### Workspace rows
 
-The row shows the workspace name with a folder icon and a chevron. The `...` menu contains **Add folder** and **Rename workspace**; the `+` button at the end creates a session in that workspace.
+The row shows the workspace name in semibold with a workspace-tree icon, so workspaces read differently from the folder rows below them. A chevron at the start reports the collapsed state and stays in place instead of replacing the icon. The `...` menu contains **Add folder** and **Rename workspace**; the `+` button at the end creates a session in that workspace.
 
 ### Folder rows
 

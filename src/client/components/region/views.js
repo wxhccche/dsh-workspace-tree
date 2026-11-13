@@ -140,7 +140,7 @@ export function renderWorkspace(scope, workspace) {
   const collapsed = Boolean(scope.collapsed['ws:' + wsKey])
   return h(
     'div',
-    { key: 'workspace:' + wsKey },
+    { key: 'workspace:' + wsKey, className: 'wsf-workspace' },
     h(WorkspaceRow, {
       t,
       label: workspaceLabel(workspace),

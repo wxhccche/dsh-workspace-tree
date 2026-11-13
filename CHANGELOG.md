@@ -9,6 +9,10 @@ All notable changes to this project are documented in this file. The format foll
 - Activity icons on session rows: a blue spinner while the agent is working and a green check when a turn finished and its result has not been opened yet.
 - `src/client/session-status.js` reads the per-session status map through the slot's `useSessionStatus` prop and falls back to the client session service snapshot; `src/client/components/session-state-icon.js` draws both states as text-free SVG so they inherit `currentColor` and work in both themes.
 
+### Changed
+
+- Workspace rows use the workspace-tree icon, a semibold label, and extra space between workspaces, so they are distinguishable from folder rows at a glance. The chevron keeps its place instead of swapping with the icon on hover, which also removes the layout shift.
+
 ## [1.0.0] - 2026-11-09
 
 First release published to npm as `@wxhccc/dsh-workspace-tree`. The 0.x versions below were local iterations that never left this machine, so the numbering starts at 1.0.0.

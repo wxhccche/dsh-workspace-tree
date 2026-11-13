@@ -280,9 +280,16 @@ window.__ModuleLoader__.load({
         align-items: center;
         display: inline-flex;
       }
-      .wsf-row--project .wsf-chevron { display: none; color: var(--dsw-alias-label-caption); }
-      .wsf-row--project:hover .wsf-chevron { display: inline-flex; }
-      .wsf-row--project:hover .wsf-folder { display: none; }
+      .wsf-row--project .wsf-project-icon { color: var(--dsw-alias-label-primary); }
+      .wsf-row--project .wsf-chevron {
+        color: var(--dsw-alias-label-caption);
+        opacity: 0.5;
+        transition: opacity 0.12s var(--ds-ease-in-out);
+      }
+      .wsf-row--project:hover .wsf-chevron,
+      .wsf-row--project:focus-visible .wsf-chevron { opacity: 1; }
+      .wsf-row--project .wsf-title { font-weight: 600; letter-spacing: 0.01em; }
+      .wsf-workspace + .wsf-workspace { margin-top: 8px; }
       .wsf-arrow { transition: transform 0.15s var(--ds-ease-in-out); }
       .wsf-arrow--open { transform: rotate(90deg); }
       .wsf-text { flex-direction: column; flex: 1; gap: 2px; min-width: 0; display: flex; }
@@ -401,7 +408,7 @@ window.__ModuleLoader__.load({
       }
       .wsf-button:hover:not(:disabled) { background: var(--dsw-alias-interactive-bg-hover); }
       .wsf-button:disabled { color: var(--dsw-alias-label-tertiary); cursor: default; }
-      @media (prefers-reduced-motion: reduce) { .wsf-arrow { transition: none; } }
+      @media (prefers-reduced-motion: reduce) { .wsf-arrow { transition: none; } .wsf-row--project .wsf-chevron { transition: none; } }
       `;
 
         // src/client/platform.js
@@ -991,8 +998,8 @@ window.__ModuleLoader__.load({
             },
             h(
               "span",
-              { className: "wsf-slot wsf-folder" },
-              h(collapsed ? import_dsh_client_ui_primitives.IconFolderCloseRegular : import_dsh_client_ui_primitives.IconFolderOpenRegular)
+              { className: "wsf-slot wsf-project-icon" },
+              h(import_dsh_client_ui_primitives.IconWorkspaceTreeOutlineRegular)
             ),
             h(
               "span",
@@ -1277,7 +1284,7 @@ window.__ModuleLoader__.load({
           const collapsed = Boolean(scope.collapsed["ws:" + wsKey]);
           return h(
             "div",
-            { key: "workspace:" + wsKey },
+            { key: "workspace:" + wsKey, className: "wsf-workspace" },
             h(WorkspaceRow, {
               t,
               label: workspaceLabel2(workspace),

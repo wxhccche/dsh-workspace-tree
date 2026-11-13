@@ -336,6 +336,8 @@ test('the stylesheet defines the running and done states', async () => {
   assert.ok(css.includes('.wsf-state--done'), 'the done state has a rule')
   assert.ok(css.includes('@keyframes wsf-spin'), 'the spinner animates')
   assert.ok(css.includes('prefers-reduced-motion'), 'the spinner respects reduced motion')
+  assert.ok(css.includes('.wsf-row--project .wsf-project-icon'), 'workspaces carry their own icon colour')
+  assert.ok(css.includes('.wsf-workspace + .wsf-workspace'), 'workspaces are separated from each other')
 })
 
 test('the settings panel renders for both registration keys', async () => {

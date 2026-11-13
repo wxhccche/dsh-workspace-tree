@@ -1,7 +1,7 @@
 /**
  * A workspace row of the sidebar tree.
  */
-import { React, h, Menu, IconEllipsisOutlineRegular, IconFolderOpenRegular, IconFolderCloseRegular, IconTriangleRightFillRegular, IconNewChatOutlineRegular, IconEditOutlineRegular } from '../platform.js'
+import { React, h, Menu, IconEllipsisOutlineRegular, IconFolderOpenRegular, IconTriangleRightFillRegular, IconNewChatOutlineRegular, IconEditOutlineRegular, IconWorkspaceTreeOutlineRegular } from '../platform.js'
 import { clsx } from '../util.js'
 export function WorkspaceRow(props) {
   const { t, label, collapsed, dropActive, editing } = props
@@ -38,8 +38,8 @@ export function WorkspaceRow(props) {
     },
     h(
       'span',
-      { className: 'wsf-slot wsf-folder' },
-      h(collapsed ? IconFolderCloseRegular : IconFolderOpenRegular),
+      { className: 'wsf-slot wsf-project-icon' },
+      h(IconWorkspaceTreeOutlineRegular),
     ),
     h(
       'span',

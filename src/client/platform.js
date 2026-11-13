@@ -17,6 +17,7 @@ import {
   IconEditOutlineRegular,
   IconTrashOutlineRegular,
   IconProjectAddOutlineRegular,
+  IconWorkspaceTreeOutlineRegular,
   IconArchiveOutlineRegular,
   writeClipboard
 } from '@deepseek-ai/dsh-client-ui-primitives'
@@ -36,6 +37,7 @@ export {
   IconEditOutlineRegular,
   IconTrashOutlineRegular,
   IconProjectAddOutlineRegular,
+  IconWorkspaceTreeOutlineRegular,
   IconArchiveOutlineRegular,
   writeClipboard
 }
