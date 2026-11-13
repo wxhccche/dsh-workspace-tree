@@ -11,6 +11,7 @@ DSH ships a sidebar that lists every workspace together with its sessions. Works
 - **Nested folders per workspace.** Any depth, collapsible, with an inline rename field.
 - **Drag and drop.** Sessions move into folders, onto another workspace, or back to a workspace root; folders can be re-parented, and a folder moved to another workspace carries its sessions with it. A folder never accepts its own descendants.
 - **Session actions in place.** Rename by double-click or `F2`, copy session ID, fork, archive, delete, and move to a folder or workspace through a submenu.
+- **Activity at a glance.** A blue spinner marks a session whose agent is working; a green check marks a finished turn that has not been opened yet.
 - **Keyboard accessible rows.** Every row is focusable and responds to `Enter` / `Space`; folders also respond to `ArrowLeft` and `ArrowRight` to collapse and expand.
 - **Recoverable deletion.** DSH has no delete API, so the host half moves the session directory into `<DSH_HOME>/session-trash` instead of erasing it.
 - **Opt-in per workspace.** A workspace that is not enabled falls back to a flat, newest-first session list with no folders and no drag handles.
@@ -68,6 +69,8 @@ The `...` menu contains **Add subfolder**, **Rename**, **Delete** and **Move to*
 ### Session rows
 
 Click to open, double-click the title to rename, drag to regroup. The `...` menu contains **Rename**, **Copy session ID**, **Fork**, **Archive**, **Delete** and **Move to**. Blank sessions only expose the menu while they are the one currently open.
+
+An icon in front of the title reports activity: a blue spinner while the agent is working, and a green check when a turn finished and its result has not been opened yet. Opening the session clears the check, which is the same rule the built-in session list follows.
 
 ### Drag and drop
 
@@ -130,7 +133,7 @@ The DSH side of that contract is documented by DSH itself: the installed app shi
 - Grouping and cross-workspace moves are rendering state in `localStorage`. They are not written back to session files, are not synchronised across browsers, and never change a session's working directory.
 - Deleting a session hides it locally until the page is reloaded; the trash directory is never pruned automatically.
 - A session is refused for deletion while it is open. Close it first and try again.
-- The row does not reproduce the built-in status dot or hover card.
+- The row shows running and finished activity, but not the built-in hover card, the subagent counter, or the waiting-for-approval state.
 
 ## Development
 

@@ -8,6 +8,7 @@
 import { h, IconProjectAddOutlineRegular } from '../../platform.js'
 import { foldersOf, workspaceKey, workspaceLabel } from '../../store.js'
 import { shortTimeText } from '../../util.js'
+import { sessionState } from '../../session-status.js'
 import { FolderRow } from '../folder-row.js'
 import { SessionRow } from '../session-row.js'
 import { WorkspaceRow } from '../workspace-row.js'
@@ -20,10 +21,16 @@ export function renderSessionRow(scope, wsKey, sessionId, depth, folderId, optio
   const movable = !options || options.movable !== false
   const summary = scope.sessionsById[sessionId] || {}
   const title = summary.blank ? t('session.new') : summary.title || t('session.untitled')
+  const state = sessionState(
+    scope.sessionStatuses ? scope.sessionStatuses.get(sessionId) : undefined,
+    summary,
+  )
   return h(SessionRow, {
     key: 'session:' + sessionId,
     t,
     title,
+    state,
+    stateLabel: state === 'running' ? t('session.running') : state === 'done' ? t('session.completed') : '',
     path: summary.cwd || sessionId,
     depth,
     selected: scope.currentMainId === sessionId,

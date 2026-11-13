@@ -70,6 +70,8 @@ window.__ModuleLoader__.load({
           "folder.deleteConfirm": "Delete this folder? Sessions inside move back to the workspace root.",
           "session.new": "New session",
           "session.untitled": "Untitled session",
+          "session.running": "Running",
+          "session.completed": "Completed",
           "session.rename": "Rename",
           "session.copyId": "Copy session ID",
           "session.fork": "Fork session",
@@ -123,6 +125,8 @@ window.__ModuleLoader__.load({
           "folder.deleteConfirm": "\u5220\u9664\u8BE5\u76EE\u5F55\uFF1F\u5176\u4E2D\u7684\u4F1A\u8BDD\u4F1A\u79FB\u56DE\u5DE5\u4F5C\u533A\u6839\u76EE\u5F55\u3002",
           "session.new": "\u65B0\u5EFA\u4F1A\u8BDD",
           "session.untitled": "\u672A\u547D\u540D\u4F1A\u8BDD",
+          "session.running": "\u8FD0\u884C\u4E2D",
+          "session.completed": "\u5DF2\u5B8C\u6210",
           "session.rename": "\u91CD\u547D\u540D",
           "session.copyId": "\u590D\u5236\u4F1A\u8BDD ID",
           "session.fork": "Fork \u4F1A\u8BDD",
@@ -292,6 +296,32 @@ window.__ModuleLoader__.load({
         overflow: hidden;
       }
       .wsf-row--session .wsf-title { margin: 0 6px 0 4px; flex: 1; }
+      .wsf-state {
+        flex: none;
+        width: 14px;
+        height: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-inline-end: 2px;
+      }
+      .wsf-state--running { color: var(--dsw-alias-state-business-primary); }
+      .wsf-state--done { color: var(--dsw-alias-state-success-primary, #2f9e5f); }
+      .wsf-state-icon { display: block; }
+      .wsf-state-track { fill: none; stroke: currentColor; stroke-width: 2; opacity: 0.22; }
+      .wsf-state-arc {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        transform-origin: 8px 8px;
+        animation: wsf-spin 900ms linear infinite;
+      }
+      .wsf-state-check { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+      @keyframes wsf-spin { to { transform: rotate(360deg); } }
+      @media (prefers-reduced-motion: reduce) {
+        .wsf-state-arc { animation: none; }
+      }
       .wsf-time {
         flex: none;
         margin-right: 6px;
@@ -521,6 +551,28 @@ window.__ModuleLoader__.load({
           );
           if (result && result.ok === false) throw new Error("rename failed: " + sessionId);
           return true;
+        }
+
+        // src/client/session-status.js
+        var EMPTY = /* @__PURE__ */ new Map();
+        function useSessionStatuses(sessions) {
+          const store = sessions && sessions.sessionStatus;
+          const [statuses, setStatuses] = import_react.default.useState(() => store ? store.getSnapshot() : EMPTY);
+          import_react.default.useEffect(() => {
+            if (!store || typeof store.subscribe !== "function") {
+              setStatuses(EMPTY);
+              return void 0;
+            }
+            setStatuses(store.getSnapshot() || EMPTY);
+            return store.subscribe(() => setStatuses(store.getSnapshot() || EMPTY));
+          }, [store]);
+          return statuses || EMPTY;
+        }
+        function sessionState(status, summary) {
+          const running = status && typeof status.running === "boolean" ? status.running : Boolean(summary && summary.running);
+          if (running) return "running";
+          if (status && status.completionUnread === true) return "done";
+          return "idle";
         }
 
         // src/client/components/region/selectors.js
@@ -759,6 +811,38 @@ window.__ModuleLoader__.load({
           );
         }
 
+        // src/client/components/session-state-icon.js
+        var SIZE = 14;
+        function SessionStateIcon(props) {
+          const state = props.state;
+          if (state !== "running" && state !== "done") return null;
+          return h(
+            "span",
+            {
+              className: "wsf-state wsf-state--" + state,
+              role: "img",
+              "aria-label": props.label,
+              title: props.label
+            },
+            h(
+              "svg",
+              {
+                className: "wsf-state-icon",
+                viewBox: "0 0 16 16",
+                width: SIZE,
+                height: SIZE,
+                "aria-hidden": "true",
+                focusable: "false"
+              },
+              state === "running" ? [
+                // Full ring at low opacity plus a moving arc: the gap reads as motion.
+                h("circle", { key: "track", className: "wsf-state-track", cx: 8, cy: 8, r: 6 }),
+                h("path", { key: "arc", className: "wsf-state-arc", d: "M8 2a6 6 0 0 1 6 6" })
+              ] : h("path", { key: "check", className: "wsf-state-check", d: "M3.6 8.4l3 3 5.8-6" })
+            )
+          );
+        }
+
         // src/client/components/session-row.js
         function SessionRow(props) {
           const { t, title, depth, dropActive, dragging, menuItems, editing, selected, time } = props;
@@ -797,7 +881,9 @@ window.__ModuleLoader__.load({
             h(
               "span",
               { className: "wsf-text" },
+              h(SessionStateIcon, { key: "state", state: props.state, label: props.stateLabel }),
               editing ? h("input", {
+                key: "input",
                 className: "wsf-input",
                 autoFocus: true,
                 value: editing.value,
@@ -816,6 +902,7 @@ window.__ModuleLoader__.load({
               }) : h(
                 "span",
                 {
+                  key: "title",
                   className: "wsf-title",
                   onDoubleClick: (event) => {
                     event.stopPropagation();
@@ -1070,10 +1157,16 @@ window.__ModuleLoader__.load({
           const movable = !options || options.movable !== false;
           const summary = scope.sessionsById[sessionId] || {};
           const title = summary.blank ? t("session.new") : summary.title || t("session.untitled");
+          const state = sessionState(
+            scope.sessionStatuses ? scope.sessionStatuses.get(sessionId) : void 0,
+            summary
+          );
           return h(SessionRow, {
             key: "session:" + sessionId,
             t,
             title,
+            state,
+            stateLabel: state === "running" ? t("session.running") : state === "done" ? t("session.completed") : "",
             path: summary.cwd || sessionId,
             depth,
             selected: scope.currentMainId === sessionId,
@@ -1277,6 +1370,7 @@ window.__ModuleLoader__.load({
             return items.filter((item) => item && workspaceKey(item));
           }, [wsState]);
           const sessionsById = sessState && sessState.byId || {};
+          const sessionStatuses = useSessionStatuses(props.sessions);
           const archivedIds = import_react.default.useMemo(() => {
             const raw = wsState && wsState.archivedSessionIds || [];
             return new Set(Array.isArray(raw) ? raw : []);
@@ -1657,6 +1751,7 @@ window.__ModuleLoader__.load({
             store,
             workspaces,
             sessionsById,
+            sessionStatuses,
             currentMainId,
             archivedIds,
             deletedIds,

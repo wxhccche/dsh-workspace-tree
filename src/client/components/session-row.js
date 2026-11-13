@@ -3,6 +3,7 @@
  */
 import { React, h, Menu, IconEllipsisOutlineRegular } from '../platform.js'
 import { clsx } from '../util.js'
+import { SessionStateIcon } from './session-state-icon.js'
 export function SessionRow(props) {
   const { t, title, depth, dropActive, dragging, menuItems, editing, selected, time } = props
   const [menuOpen, setMenuOpen] = React.useState(false)
@@ -40,8 +41,10 @@ export function SessionRow(props) {
     h(
       'span',
       { className: 'wsf-text' },
+      h(SessionStateIcon, { key: 'state', state: props.state, label: props.stateLabel }),
       editing
         ? h('input', {
+            key: 'input',
             className: 'wsf-input',
             autoFocus: true,
             value: editing.value,
@@ -61,6 +64,7 @@ export function SessionRow(props) {
         : h(
             'span',
             {
+              key: 'title',
               className: 'wsf-title',
               onDoubleClick: (event) => {
                 event.stopPropagation()

@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented in this file. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-11-13
+
+### Added
+
+- Activity icons on session rows: a blue spinner while the agent is working and a green check when a turn finished and its result has not been opened yet.
+- `src/client/session-status.js` subscribes to the client session service's status snapshot; `src/client/components/session-state-icon.js` draws both states as text-free SVG so they inherit `currentColor` and work in both themes.
+
 ## [1.0.0] - 2026-11-09
 
 First release published to npm as `@wxhccc/dsh-workspace-tree`. The 0.x versions below were local iterations that never left this machine, so the numbering starts at 1.0.0.

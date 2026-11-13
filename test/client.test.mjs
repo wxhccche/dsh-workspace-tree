@@ -181,7 +181,15 @@ const regionProps = () => {
     uiWorkspace: uiWorkspace(),
     workspaces: { create: async () => {}, rename: async () => {} },
     sessions: {
-      using: (id, options, run) => run({ binding: { session: { rename: async () => ({ ok: true }) } } })
+      using: (id, options, run) => run({ binding: { session: { rename: async () => ({ ok: true }) } } }),
+      sessionStatus: {
+        getSnapshot: () =>
+          new Map([
+            [SESSION.one, { running: true }],
+            [SESSION.three, { running: false, completionUnread: true }]
+          ]),
+        subscribe: () => noop
+      }
     }
   }
 }
@@ -225,6 +233,10 @@ test('the locale dictionaries define the keys the region uses', async () => {
   assert.equal(locales.get('zh')['session.new'], '新建会话')
   assert.equal(locales.get('en')['session.deleteOpen'], 'This session is open. Close it before deleting it.')
   assert.equal(locales.get('zh')['session.deleteOpen'], '该会话正在使用中，请先关闭再删除。')
+  assert.equal(locales.get('en')['session.running'], 'Running')
+  assert.equal(locales.get('zh')['session.running'], '运行中')
+  assert.equal(locales.get('en')['session.completed'], 'Completed')
+  assert.equal(locales.get('zh')['session.completed'], '已完成')
 })
 
 test('the region renders folders, nested sessions and the flat fallback', async () => {
@@ -284,6 +296,31 @@ test('session menus expose the actions and move targets', async () => {
   const folderTargets = folderMove.submenu.map((item) => item.id)
   assert.ok(!folderTargets.includes('mv:f1'), 'a folder never moves into itself')
   assert.ok(!folderTargets.includes('mv:f2'), 'a folder never moves into its descendants')
+})
+
+test('the session rows carry the activity state', async () => {
+  const { registrations } = await loadBundle()
+  const browser = registrations.find((item) => item.config.name === 'sidebar.workspaces')
+  const tree = browser.component(regionProps())
+
+  const rows = collect(tree, ['SessionRow'])
+  const byTitle = (title) => rows.find((row) => row.props.title === title)
+
+  assert.equal(byTitle('Refactor the sidebar').props.state, 'running')
+  assert.equal(byTitle('Refactor the sidebar').props.stateLabel, 'session.running')
+  assert.equal(byTitle('Flat session').props.state, 'done')
+  assert.equal(byTitle('Flat session').props.stateLabel, 'session.completed')
+  assert.equal(byTitle('Child folder session').props.state, 'idle')
+  assert.equal(byTitle('Child folder session').props.stateLabel, '')
+})
+
+test('the stylesheet defines the running and done states', async () => {
+  const css = await readFile(join(root, 'client.js'), 'utf8')
+
+  assert.ok(css.includes('.wsf-state--running'), 'the running state has a rule')
+  assert.ok(css.includes('.wsf-state--done'), 'the done state has a rule')
+  assert.ok(css.includes('@keyframes wsf-spin'), 'the spinner animates')
+  assert.ok(css.includes('prefers-reduced-motion'), 'the spinner respects reduced motion')
 })
 
 test('the settings panel renders for both registration keys', async () => {

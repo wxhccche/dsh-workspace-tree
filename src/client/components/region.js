@@ -18,6 +18,7 @@ import {
   foldersOf
 } from '../store.js'
 import { renameSession } from '../session-service.js'
+import { useSessionStatuses } from '../session-status.js'
 import { subtreeIds } from './region/selectors.js'
 import { renderRegion } from './region/views.js'
 
@@ -36,6 +37,7 @@ export function Region(props) {
     return items.filter((item) => item && workspaceKey(item))
   }, [wsState])
   const sessionsById = (sessState && sessState.byId) || {}
+  const sessionStatuses = useSessionStatuses(props.sessions)
   const archivedIds = React.useMemo(() => {
     const raw = (wsState && wsState.archivedSessionIds) || []
     return new Set(Array.isArray(raw) ? raw : [])
@@ -482,6 +484,7 @@ export function Region(props) {
     store,
     workspaces,
     sessionsById,
+    sessionStatuses,
     currentMainId,
     archivedIds,
     deletedIds,

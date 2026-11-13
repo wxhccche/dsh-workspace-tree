@@ -133,6 +133,32 @@ export const css = `
   overflow: hidden;
 }
 .wsf-row--session .wsf-title { margin: 0 6px 0 4px; flex: 1; }
+.wsf-state {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-inline-end: 2px;
+}
+.wsf-state--running { color: var(--dsw-alias-state-business-primary); }
+.wsf-state--done { color: var(--dsw-alias-state-success-primary, #2f9e5f); }
+.wsf-state-icon { display: block; }
+.wsf-state-track { fill: none; stroke: currentColor; stroke-width: 2; opacity: 0.22; }
+.wsf-state-arc {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  transform-origin: 8px 8px;
+  animation: wsf-spin 900ms linear infinite;
+}
+.wsf-state-check { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+@keyframes wsf-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .wsf-state-arc { animation: none; }
+}
 .wsf-time {
   flex: none;
   margin-right: 6px;
