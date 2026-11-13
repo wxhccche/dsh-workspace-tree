@@ -314,6 +314,21 @@ test('the session rows carry the activity state', async () => {
   assert.equal(byTitle('Child folder session').props.stateLabel, '')
 })
 
+test('the slot status prop wins over the service snapshot', async () => {
+  const { registrations } = await loadBundle()
+  const browser = registrations.find((item) => item.config.name === 'sidebar.workspaces')
+  const props = regionProps()
+  props.useSessionStatus = (select) =>
+    select(new Map([[SESSION.one, { running: false, completionUnread: true }]]))
+  const tree = browser.component(props)
+
+  const rows = collect(tree, ['SessionRow'])
+  const byTitle = (title) => rows.find((row) => row.props.title === title)
+
+  assert.equal(byTitle('Refactor the sidebar').props.state, 'done', 'the slot hook replaced the running flag')
+  assert.equal(byTitle('Child folder session').props.state, 'idle', 'sessions missing from the map stay idle')
+})
+
 test('the stylesheet defines the running and done states', async () => {
   const css = await readFile(join(root, 'client.js'), 'utf8')
 

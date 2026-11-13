@@ -7,7 +7,7 @@ All notable changes to this project are documented in this file. The format foll
 ### Added
 
 - Activity icons on session rows: a blue spinner while the agent is working and a green check when a turn finished and its result has not been opened yet.
-- `src/client/session-status.js` subscribes to the client session service's status snapshot; `src/client/components/session-state-icon.js` draws both states as text-free SVG so they inherit `currentColor` and work in both themes.
+- `src/client/session-status.js` reads the per-session status map through the slot's `useSessionStatus` prop and falls back to the client session service snapshot; `src/client/components/session-state-icon.js` draws both states as text-free SVG so they inherit `currentColor` and work in both themes.
 
 ## [1.0.0] - 2026-11-09
 

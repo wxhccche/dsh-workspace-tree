@@ -37,7 +37,7 @@ export function Region(props) {
     return items.filter((item) => item && workspaceKey(item))
   }, [wsState])
   const sessionsById = (sessState && sessState.byId) || {}
-  const sessionStatuses = useSessionStatuses(props.sessions)
+  const sessionStatuses = useSessionStatuses(props)
   const archivedIds = React.useMemo(() => {
     const raw = (wsState && wsState.archivedSessionIds) || []
     return new Set(Array.isArray(raw) ? raw : [])

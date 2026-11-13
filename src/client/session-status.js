@@ -1,32 +1,63 @@
 /**
  * Session activity for the tree.
  *
- * The client session service publishes a per-session status map (`running`,
- * `completionUnread`, `pendingInteraction`); the built-in sidebar turns it into
- * state dots. The tree only needs two of those states, so this module keeps the
- * subscription and the reduction in one place.
+ * The status of a session is a map from session id to
+ * `{ running, completionUnread, pendingInteraction }`. The sidebar slot hands
+ * it to its occupants as the standard `useSessionStatus` prop; the client
+ * session service exposes the same snapshot object, which is used when the
+ * prop is missing (for example in tests or in an older shell).
+ *
+ * The built-in browser reduces the map with `running ?? summary.running` and
+ * `completionUnread === true`; the tree keeps those two rules so the icons
+ * mean the same thing.
  */
 import { React } from './platform.js'
 
 const EMPTY = new Map()
 
 /**
- * Subscribe to the per-session status map.
+ * Select the whole snapshot; the status map is already the shape the tree needs.
+ * @param {Map<string, object>} snapshot The status map published by the shell.
+ * @returns {Map<string, object>} The same map, or an empty one.
+ */
+function selectAll(snapshot) {
+  return snapshot || EMPTY
+}
+
+/**
+ * Subscribe to the status map through the client session service.
  * @param {object} sessions The client session service, or anything else.
  * @returns {Map<string, object>} sessionId to `{ running, completionUnread }`.
  */
-export function useSessionStatuses(sessions) {
+function useServiceStatuses(sessions) {
   const store = sessions && sessions.sessionStatus
-  const [statuses, setStatuses] = React.useState(() => (store ? store.getSnapshot() : EMPTY))
+  const [statuses, setStatuses] = React.useState(() => (store ? store.getSnapshot() || EMPTY : EMPTY))
   React.useEffect(() => {
     if (!store || typeof store.subscribe !== 'function') {
       setStatuses(EMPTY)
       return undefined
     }
     setStatuses(store.getSnapshot() || EMPTY)
-    return store.subscribe(() => setStatuses(store.getSnapshot() || EMPTY))
+    const unsubscribe = store.subscribe(() => setStatuses(store.getSnapshot() || EMPTY))
+    return typeof unsubscribe === 'function' ? unsubscribe : undefined
   }, [store])
   return statuses || EMPTY
+}
+
+/**
+ * Read the per-session status map.
+ *
+ * The slot prop wins because it is the documented contract; the service is the
+ * fallback, and an absent status source degrades to an empty map, which leaves
+ * every row without an icon instead of failing to render.
+ * @param {object} props The slot props of the region.
+ * @returns {Map<string, object>} sessionId to `{ running, completionUnread }`.
+ */
+export function useSessionStatuses(props) {
+  const viaSlot = props && typeof props.useSessionStatus === 'function' ? props.useSessionStatus : null
+  const viaService = useServiceStatuses(viaSlot ? null : props && props.sessions)
+  const fromSlot = viaSlot ? viaSlot(selectAll) : null
+  return fromSlot || viaService || EMPTY
 }
 
 /**

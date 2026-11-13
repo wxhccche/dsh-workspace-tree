@@ -555,18 +555,28 @@ window.__ModuleLoader__.load({
 
         // src/client/session-status.js
         var EMPTY = /* @__PURE__ */ new Map();
-        function useSessionStatuses(sessions) {
+        function selectAll(snapshot) {
+          return snapshot || EMPTY;
+        }
+        function useServiceStatuses(sessions) {
           const store = sessions && sessions.sessionStatus;
-          const [statuses, setStatuses] = import_react.default.useState(() => store ? store.getSnapshot() : EMPTY);
+          const [statuses, setStatuses] = import_react.default.useState(() => store ? store.getSnapshot() || EMPTY : EMPTY);
           import_react.default.useEffect(() => {
             if (!store || typeof store.subscribe !== "function") {
               setStatuses(EMPTY);
               return void 0;
             }
             setStatuses(store.getSnapshot() || EMPTY);
-            return store.subscribe(() => setStatuses(store.getSnapshot() || EMPTY));
+            const unsubscribe = store.subscribe(() => setStatuses(store.getSnapshot() || EMPTY));
+            return typeof unsubscribe === "function" ? unsubscribe : void 0;
           }, [store]);
           return statuses || EMPTY;
+        }
+        function useSessionStatuses(props) {
+          const viaSlot = props && typeof props.useSessionStatus === "function" ? props.useSessionStatus : null;
+          const viaService = useServiceStatuses(viaSlot ? null : props && props.sessions);
+          const fromSlot = viaSlot ? viaSlot(selectAll) : null;
+          return fromSlot || viaService || EMPTY;
         }
         function sessionState(status, summary) {
           const running = status && typeof status.running === "boolean" ? status.running : Boolean(summary && summary.running);
@@ -1370,7 +1380,7 @@ window.__ModuleLoader__.load({
             return items.filter((item) => item && workspaceKey(item));
           }, [wsState]);
           const sessionsById = sessState && sessState.byId || {};
-          const sessionStatuses = useSessionStatuses(props.sessions);
+          const sessionStatuses = useSessionStatuses(props);
           const archivedIds = import_react.default.useMemo(() => {
             const raw = wsState && wsState.archivedSessionIds || [];
             return new Set(Array.isArray(raw) ? raw : []);
