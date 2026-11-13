@@ -122,6 +122,8 @@ A configuration block is contributed through the keyed slot `plugins.bundle.conf
 
 See [docs/architecture.md](./docs/architecture.md) for the full contract: which DSH services are used, how the session and projection-cache paths are derived, and how to verify a change.
 
+The DSH side of that contract is documented by DSH itself: the installed app ships `docs/subsystems/` (`client-modules.md` for the bundle loader, `session.md` and `persistence.md` for the on-disk layout, `web-server.md` for routes), and the public site mirrors the same pages at [deepseek-harness.github.io](https://deepseek-harness.github.io/deepseek-harness/). Prefer those pages and `cordis_inspect_*` over reading built code.
+
 ## Limitations
 
 - Replacing the built-in browser also removes its search box, archive view, pinning and the shipped nested workspace tree. The plugin provides the session list, grouping and the session actions listed above.

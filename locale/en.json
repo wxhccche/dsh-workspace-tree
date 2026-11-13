@@ -1,6 +1,7 @@
 {
   "meta": {
     "title": "Workspace Tree",
-    "description": "Groups sidebar sessions into nested, user-defined folders with drag-and-drop, cross-workspace moves, and a recoverable trash for deleted sessions."
+    "description": "Adds nested folders to the sidebar session list. Each workspace row has a ... menu with Add folder and Rename workspace, and its + button starts a new session there. Drag a session or a folder onto another row to regroup it, including into a different workspace; a session's ... menu offers Rename, Copy session ID, Fork session, Archive session, Delete session and Move. Deleted sessions go to a recoverable trash that the plugin settings page lists and clears. Turning the plugin off restores the flat session list and keeps the folders for later.",
+    "detail": "docs/DETAIL.md"
   }
 }

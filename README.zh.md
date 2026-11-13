@@ -122,6 +122,8 @@ Workspace Tree 为 `sidebar.workspaces` 槽位注册了一个替代实现。sing
 
 完整的契约说明见 [docs/architecture.md](./docs/architecture.md)：使用了哪些 DSH 服务、会话目录与投影缓存路径如何推导、以及如何验证一次改动。
 
+这些契约的 DSH 一侧由 DSH 自己的文档定义：安装包内附带 `docs/subsystems/`（`client-modules.md` 讲 bundle 加载器，`session.md` 与 `persistence.md` 讲落盘布局，`web-server.md` 讲路由），公开站点 [deepseek-harness.github.io](https://deepseek-harness.github.io/deepseek-harness/) 是同一批页面的镜像。查这些页面与 `cordis_inspect_*` 比读编译产物可靠。
+
 ## 限制
 
 - 替换内置浏览区后，其搜索框、归档视图、固定（pin）以及内置的工作区嵌套树也随之消失；插件提供会话列表、目录分组与上述会话操作。
