@@ -44,10 +44,16 @@
     "dsh",
     "dsh-plugin",
     "deepseek-harness",
+    "deepseek",
     "sidebar",
     "workspace",
+    "workspace-folders",
     "session",
-    "folders"
+    "session-groups",
+    "session-folders",
+    "nested-folders",
+    "folders",
+    "drag-and-drop"
   ],
   "author": "wxhccche",
   "license": "MIT",

@@ -12,6 +12,7 @@ All notable changes to this project are documented in this file. The format foll
 ### Changed
 
 - Workspace rows use the workspace-tree icon, a semibold label, and extra space between workspaces, so they are distinguishable from folder rows at a glance. The chevron keeps its place instead of swapping with the icon on hover, which also removes the layout shift.
+- The disclosure chevron is 12px wide instead of sharing the 16px icon slot, and the workspace chevron is pulled 4px towards its icon, so the arrow no longer sits in its own column. The npm manifest carries a wider keyword set for discovery.
 
 ## [1.0.0] - 2026-11-09
 

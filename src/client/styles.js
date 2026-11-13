@@ -117,9 +117,11 @@ export const css = `
   align-items: center;
   display: inline-flex;
 }
+.wsf-chevron { width: 12px; }
 .wsf-row--project .wsf-project-icon { color: var(--dsw-alias-label-primary); }
 .wsf-row--project .wsf-chevron {
   color: var(--dsw-alias-label-caption);
+  margin-inline-start: -4px;
   opacity: 0.5;
   transition: opacity 0.12s var(--ds-ease-in-out);
 }

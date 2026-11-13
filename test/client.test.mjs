@@ -338,6 +338,8 @@ test('the stylesheet defines the running and done states', async () => {
   assert.ok(css.includes('prefers-reduced-motion'), 'the spinner respects reduced motion')
   assert.ok(css.includes('.wsf-row--project .wsf-project-icon'), 'workspaces carry their own icon colour')
   assert.ok(css.includes('.wsf-workspace + .wsf-workspace'), 'workspaces are separated from each other')
+  assert.ok(css.includes('.wsf-chevron { width: 12px; }'), 'the disclosure chevron is narrower than an icon slot')
+  assert.ok(/\.wsf-row--project \.wsf-chevron \{[^}]*margin-inline-start: -4px/.test(css), 'the project chevron sits close to its icon')
 })
 
 test('the settings panel renders for both registration keys', async () => {
