@@ -108,14 +108,14 @@ The host half (`index.js`) registers four exact routes on the DSH web server. Al
 
 | Method | Path | Description |
 |---|---|---|
-| `POST` | `/workspace-tree/sessions/delete` | Moves a session directory into `<DSH_HOME>/session-trash/<id>-<timestamp>` and drops its projection cache. Returns `409 session-open` while the session is live. |
+| `POST` | `/workspace-tree/sessions/delete` | Moves a session directory into `<DSH_HOME>/session-trash/<id>-<timestamp>` and drops its projection cache. The client asks before deleting and refuses a session that is running or currently open. |
 | `POST` | `/workspace-tree/sessions/model` | Selects a model for a new session, preferring `catalog.default` and otherwise the first available entry. |
 | `GET` | `/workspace-tree/trash` | Returns `{ ok, count, bytes }` for the trash directory. |
 | `POST` | `/workspace-tree/trash/clear` | Deletes every directory inside the trash. Returns `{ ok, removed }`. |
 
 Request bodies are limited to 4 KiB and session identifiers must match `/^session-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i`.
 
-Error responses carry a stable code: `method-not-allowed`, `bad-body`, `bad-session-id`, `missing-dsh-home`, `missing-session-controller`, `session-open`, `not-found`, `scan-failed`, `move-failed`, `catalog-failed`, `no-model`, `select-failed`, `clear-failed`, `cross-site-request`.
+Error responses carry a stable code: `method-not-allowed`, `bad-body`, `bad-session-id`, `missing-dsh-home`, `missing-session-controller`, `not-found`, `scan-failed`, `move-failed`, `catalog-failed`, `no-model`, `select-failed`, `clear-failed`, `cross-site-request`.
 
 ## How it works
 

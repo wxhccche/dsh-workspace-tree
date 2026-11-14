@@ -428,6 +428,17 @@ export function Region(props) {
   }
 
   const deleteSession = (sessionId) => {
+    // The Host cannot tell an idle session from one that is being written to, so
+    // the refusal lives here: only a running session or the one in the main view
+    // keeps appending to its log.
+    const status =
+      sessionStatuses && typeof sessionStatuses.get === 'function'
+        ? sessionStatuses.get(sessionId)
+        : undefined
+    if ((status && status.running === true) || sessionId === currentMainId) {
+      if (typeof window.alert === 'function') window.alert(t('session.deleteBusy'))
+      return
+    }
     if (typeof window.confirm === 'function' && !window.confirm(t('session.deleteConfirm'))) {
       return
     }
@@ -463,7 +474,7 @@ export function Region(props) {
       .catch((error) => {
         console.warn('[workspace-tree] delete session failed', error)
         if (typeof window.alert !== 'function') return
-        const key = error && error.code === 'session-open' ? 'session.deleteOpen' : 'session.deleteFailed'
+        const key = error && error.code === 'session-busy' ? 'session.deleteBusy' : 'session.deleteFailed'
         window.alert(t(key))
       })
   }

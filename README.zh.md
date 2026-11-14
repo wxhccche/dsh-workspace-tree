@@ -108,14 +108,14 @@ Host 半边（`index.js`）在 DSH Web 服务器上注册 4 条精确路由。�
 
 | 方法 | 路径 | 说明 |
 |---|---|---|
-| `POST` | `/workspace-tree/sessions/delete` | 把会话目录移入 `<DSH_HOME>/session-trash/<id>-<timestamp>` 并清理其投影缓存；会话正在使用时返回 `409 session-open`。 |
+| `POST` | `/workspace-tree/sessions/delete` | 把会话目录移入 `<DSH_HOME>/session-trash/<id>-<timestamp>` 并清理其投影缓存；删除前会二次确认，运行中或正打开的会话会被拒绝。 |
 | `POST` | `/workspace-tree/sessions/model` | 为新会话补选模型，优先 `catalog.default`，否则取第一个可用项。 |
 | `GET` | `/workspace-tree/trash` | 返回回收目录的 `{ ok, count, bytes }`。 |
 | `POST` | `/workspace-tree/trash/clear` | 删除回收目录下的所有目录，返回 `{ ok, removed }`。 |
 
 请求体上限为 4 KiB，会话标识必须匹配 `/^session-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i`。
 
-错误响应带有稳定的错误码：`method-not-allowed`、`bad-body`、`bad-session-id`、`missing-dsh-home`、`missing-session-controller`、`session-open`、`not-found`、`scan-failed`、`move-failed`、`catalog-failed`、`no-model`、`select-failed`、`clear-failed`、`cross-site-request`。
+错误响应带有稳定的错误码：`method-not-allowed`、`bad-body`、`bad-session-id`、`missing-dsh-home`、`missing-session-controller`、`not-found`、`scan-failed`、`move-failed`、`catalog-failed`、`no-model`、`select-failed`、`clear-failed`、`cross-site-request`。
 
 ## 实现方式
 

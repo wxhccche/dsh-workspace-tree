@@ -231,8 +231,8 @@ test('the locale dictionaries define the keys the region uses', async () => {
 
   assert.equal(locales.get('en')['session.new'], 'New session')
   assert.equal(locales.get('zh')['session.new'], '新建会话')
-  assert.equal(locales.get('en')['session.deleteOpen'], 'This session is open. Close it before deleting it.')
-  assert.equal(locales.get('zh')['session.deleteOpen'], '该会话正在使用中，请先关闭再删除。')
+  assert.equal(locales.get('en')['session.deleteBusy'], 'This session is running or open. Close it before deleting it.')
+  assert.equal(locales.get('zh')['session.deleteBusy'], '该会话正在运行或已打开，请先关闭再删除。')
   assert.equal(locales.get('en')['session.running'], 'Running')
   assert.equal(locales.get('zh')['session.running'], '运行中')
   assert.equal(locales.get('en')['session.completed'], 'Completed')
@@ -296,6 +296,24 @@ test('session menus expose the actions and move targets', async () => {
   const folderTargets = folderMove.submenu.map((item) => item.id)
   assert.ok(!folderTargets.includes('mv:f1'), 'a folder never moves into itself')
   assert.ok(!folderTargets.includes('mv:f2'), 'a folder never moves into its descendants')
+})
+
+test('a running session refuses deletion in the client', async () => {
+  const { registrations } = await loadBundle()
+  const browser = registrations.find((item) => item.config.name === 'sidebar.workspaces')
+  const tree = browser.component(regionProps())
+
+  const running = collect(tree, ['SessionRow']).find((row) => row.props.title === 'Refactor the sidebar')
+  const alerts = []
+  const previousAlert = globalThis.alert
+  globalThis.alert = (message) => alerts.push(message)
+  try {
+    running.props.onMenuSelect('delete')
+  } finally {
+    globalThis.alert = previousAlert
+  }
+
+  assert.deepEqual(alerts, ['session.deleteBusy'], 'the guard names the busy session, not a failed request')
 })
 
 test('the session rows carry the activity state', async () => {

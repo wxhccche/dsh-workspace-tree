@@ -99,16 +99,20 @@ test('delete moves a closed session into the trash and drops its cache', async (
   })
 })
 
-test('delete refuses a session that is still open', async () => {
+test('delete is not blocked by the live session store', async () => {
   await withHome(async (home) => {
     await seedSession(home, SESSION)
-    const routes = await loadRoutes({ get: (name) => (name === 'sessions' ? { get: () => ({ id: SESSION }) } : undefined) })
+    // `ctx.sessions` only reports that the Host materialized the session at some
+    // point, so a session the user merely looked at must still be deletable.
+    const routes = await loadRoutes({
+      get: (name) => (name === 'sessions' ? { get: () => ({ id: SESSION }) } : undefined),
+    })
     const res = response()
     await routes.get('/workspace-tree/sessions/delete')(request('POST', { sessionId: SESSION }), res)
 
-    assert.equal(res.statusCode, 409)
-    assert.equal(res.body.error, 'session-open')
-    assert.ok(existsSync(join(home, 'sessions', '--tmp-project--', SESSION)))
+    assert.equal(res.statusCode, 200)
+    assert.equal(res.body.ok, true)
+    assert.equal(existsSync(join(home, 'sessions', '--tmp-project--', SESSION)), false)
   })
 })
 

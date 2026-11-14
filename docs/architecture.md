@@ -88,7 +88,7 @@ ctx.slots.inject('sidebar', () => {
 
 | Method | Path | Behaviour |
 |---|---|---|
-| `POST` | `/workspace-tree/sessions/delete` | Validates the session id, refuses live sessions with `409 session-open`, moves the session directory into `<DSH_HOME>/session-trash/<id>-<timestamp>`, then deletes the projection cache entry best-effort. |
+| `POST` | `/workspace-tree/sessions/delete` | Validates the session id, moves the session directory into `<DSH_HOME>/session-trash/<id>-<timestamp>`, then deletes the projection cache entry best-effort. Deletion is not gated on the Host session store: `ctx.sessions.get()` only reports that the process materialized the session at some point, so gating on it would make every session the user ever opened permanently undeletable. The client holds the refusal instead, because only it knows which session is running and which one is in the main view. |
 | `POST` | `/workspace-tree/sessions/model` | Reads `sessionController.modelCatalog()`, prefers `catalog.default`, and calls `sessionController.selectModel({ sessionId, provider, model })`. |
 | `GET` | `/workspace-tree/trash` | Recursively sums the directories in the trash. |
 | `POST` | `/workspace-tree/trash/clear` | Removes every directory in the trash and reports how many were removed. |
