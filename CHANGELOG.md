@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-11-14
+
+### Fixed
+
+- Deleting an idle session no longer fails with `session-open`. The guard keyed off `ctx.sessions.get()`, which is the Host's in-memory store of sessions the process materialized, not the set of open views: viewing a session once kept it "live" for the rest of the process, so it could never be deleted. The Host now always moves the directory and drops the projection cache entry, and the client refuses only a session that is running or currently open, reporting `session.deleteBusy`.
+
 ## [1.1.0] - 2026-11-13
 
 ### Added
@@ -11,7 +17,6 @@ All notable changes to this project are documented in this file. The format foll
 
 ### Changed
 
-- Deleting a session is no longer refused by the Host. The `409 session-open` guard keyed off the in-memory session store, which reports every session the process ever materialized, so any session the user had viewed once became undeletable. The client now refuses only a session that is running or currently open, which is the state that actually keeps the log writable.
 - Workspace rows use the workspace-tree icon, a semibold label, and extra space between workspaces, so they are distinguishable from folder rows at a glance. The chevron keeps its place instead of swapping with the icon on hover, which also removes the layout shift.
 - The disclosure chevron is 12px wide instead of sharing the 16px icon slot, and the workspace chevron is pulled 4px towards its icon, so the arrow no longer sits in its own column. The npm manifest carries a wider keyword set for discovery.
 
