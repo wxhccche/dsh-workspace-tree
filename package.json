@@ -1,6 +1,6 @@
 {
   "name": "@wxhccc/dsh-workspace-tree",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "private": false,
   "description": "Organizes DSH sidebar sessions into nested, user-defined folders with drag-and-drop grouping, cross-workspace moves and recoverable session deletion.",
   "type": "module",

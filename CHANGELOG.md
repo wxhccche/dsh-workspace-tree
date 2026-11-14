@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented in this file. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2026-11-14
+
+### Fixed
+
+- Deleting a session that was never written to disk no longer fails. A blank session exists in memory until its first message materializes a log, so the route found no directory and answered `not-found`; it now reports `{ ok: true, missing: true }`, which is the honest result because nothing has to be moved.
+- A failed delete now names its cause in the dialog, e.g. `Could not delete this session. (move-failed)`. Every other signal lived only in the developer console, which made "the Host refused" indistinguishable from "the browser never reached the Host".
+- A delete answered with `session-open` now says that the Host is still running an older build of the plugin and asks for a restart. The Host resolves its routes from the copy of `lib/` it loaded at start up, so upgrading the package alone leaves the previous handler in memory.
+
+### Changed
+
+- The delete route resolves a session directory through `sessionPersistence.stat()` and its `location.path` first, and only falls back to the documented `<root>/<project key>/<id>` scan when the service cannot answer, so a configured persistence root no longer needs to match `DSH_HOME`.
+
 ## [1.1.1] - 2026-11-14
 
 ### Fixed

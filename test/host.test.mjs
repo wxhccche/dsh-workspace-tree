@@ -116,15 +116,18 @@ test('delete is not blocked by the live session store', async () => {
   })
 })
 
-test('delete reports unknown and malformed session ids', async () => {
+test('delete treats a session without a log as already gone', async () => {
   await withHome(async () => {
     const routes = await loadRoutes({})
     const handler = routes.get('/workspace-tree/sessions/delete')
 
+    // A blank session lives in memory only until it materializes; with nothing
+    // on disk there is nothing to move, and refusing would strand the row.
     const missing = response()
     await handler(request('POST', { sessionId: OTHER }), missing)
-    assert.equal(missing.statusCode, 404)
-    assert.equal(missing.body.error, 'not-found')
+    assert.equal(missing.statusCode, 200)
+    assert.equal(missing.body.ok, true)
+    assert.equal(missing.body.missing, true)
 
     const malformed = response()
     await handler(request('POST', { sessionId: '../../etc/passwd' }), malformed)

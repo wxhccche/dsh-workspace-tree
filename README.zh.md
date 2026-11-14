@@ -115,7 +115,7 @@ Host 半边（`index.js`）在 DSH Web 服务器上注册 4 条精确路由。�
 
 请求体上限为 4 KiB，会话标识必须匹配 `/^session-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i`。
 
-错误响应带有稳定的错误码：`method-not-allowed`、`bad-body`、`bad-session-id`、`missing-dsh-home`、`missing-session-controller`、`not-found`、`scan-failed`、`move-failed`、`catalog-failed`、`no-model`、`select-failed`、`clear-failed`、`cross-site-request`。
+错误响应带有稳定的错误码：`method-not-allowed`、`bad-body`、`bad-session-id`、`missing-dsh-home`、`missing-session-controller`、`scan-failed`、`move-failed`、`catalog-failed`、`no-model`、`select-failed`、`clear-failed`、`cross-site-request`。从未写入磁盘的会话返回 `{ ok: true, missing: true }` 而不是错误——它没有目录需要移动。
 
 ## 实现方式
 

@@ -472,10 +472,26 @@ export function Region(props) {
         })
       })
       .catch((error) => {
-        console.warn('[workspace-tree] delete session failed', error)
+        // The code is part of the message on purpose: every other signal this
+        // failure produces is invisible outside the developer console, and the
+        // difference between "the Host moved nothing" and "the browser never
+        // reached the Host" is exactly that code.
+        const code =
+          (error && error.code) || (error && error.name === 'TypeError' ? 'network' : 'delete-failed')
+        console.warn('[workspace-tree] delete session failed', code, error)
         if (typeof window.alert !== 'function') return
-        const key = error && error.code === 'session-busy' ? 'session.deleteBusy' : 'session.deleteFailed'
-        window.alert(t(key))
+        if (code === 'session-busy') {
+          window.alert(t('session.deleteBusy'))
+          return
+        }
+        if (code === 'session-open') {
+          // The Host resolves routes from the copy of `lib/` it loaded at start
+          // up, so an upgraded plugin keeps serving the old handler until the
+          // application restarts. That code only exists in that stale build.
+          window.alert(t('session.deleteStale'))
+          return
+        }
+        window.alert(t('session.deleteFailed') + ' (' + code + ')')
       })
   }
 

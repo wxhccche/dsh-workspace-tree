@@ -115,7 +115,7 @@ The host half (`index.js`) registers four exact routes on the DSH web server. Al
 
 Request bodies are limited to 4 KiB and session identifiers must match `/^session-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i`.
 
-Error responses carry a stable code: `method-not-allowed`, `bad-body`, `bad-session-id`, `missing-dsh-home`, `missing-session-controller`, `not-found`, `scan-failed`, `move-failed`, `catalog-failed`, `no-model`, `select-failed`, `clear-failed`, `cross-site-request`.
+Error responses carry a stable code: `method-not-allowed`, `bad-body`, `bad-session-id`, `missing-dsh-home`, `missing-session-controller`, `scan-failed`, `move-failed`, `catalog-failed`, `no-model`, `select-failed`, `clear-failed`, `cross-site-request`. A session that was never written to disk is reported as `{ ok: true, missing: true }` rather than as an error, because there is nothing left to move.
 
 ## How it works
 

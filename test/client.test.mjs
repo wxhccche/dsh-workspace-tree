@@ -316,6 +316,42 @@ test('a running session refuses deletion in the client', async () => {
   assert.deepEqual(alerts, ['session.deleteBusy'], 'the guard names the busy session, not a failed request')
 })
 
+test('a failed delete names its cause', async () => {
+  const { registrations } = await loadBundle()
+  const browser = registrations.find((item) => item.config.name === 'sidebar.workspaces')
+  const tree = browser.component(regionProps())
+
+  const idle = collect(tree, ['SessionRow']).find((row) => row.props.title === 'Child folder session')
+  const alerts = []
+  const previous = {
+    alert: globalThis.alert,
+    confirm: globalThis.confirm,
+    fetch: globalThis.fetch,
+    warn: console.warn
+  }
+  globalThis.alert = (message) => alerts.push(message)
+  globalThis.confirm = () => true
+  // An older build of the Host answers 409 session-open; the dialog has to say
+  // so instead of repeating the generic failure.
+  globalThis.fetch = async () => ({
+    ok: false,
+    status: 409,
+    json: async () => ({ ok: false, error: 'session-open' })
+  })
+  console.warn = () => {}
+  try {
+    idle.props.onMenuSelect('delete')
+    await new Promise((resolve) => setTimeout(resolve, 0))
+  } finally {
+    globalThis.alert = previous.alert
+    globalThis.confirm = previous.confirm
+    globalThis.fetch = previous.fetch
+    console.warn = previous.warn
+  }
+
+  assert.deepEqual(alerts, ['session.deleteStale'], 'a stale Host build is named, not a generic failure')
+})
+
 test('the session rows carry the activity state', async () => {
   const { registrations } = await loadBundle()
   const browser = registrations.find((item) => item.config.name === 'sidebar.workspaces')

@@ -81,6 +81,7 @@ window.__ModuleLoader__.load({
           "session.deleteConfirm": "Delete this session? Its log moves to the DSH session trash instead of being erased.",
           "session.deleteFailed": "Could not delete this session.",
           "session.deleteBusy": "This session is running or open. Close it before deleting it.",
+          "session.deleteStale": "The Host is still running an older build of this plugin. Restart DeepSeek Harness and try again.",
           "session.moveTo": "Move to",
           "session.moveRoot": "Workspace root",
           "session.actions": "Session actions",
@@ -136,6 +137,7 @@ window.__ModuleLoader__.load({
           "session.deleteConfirm": "\u5220\u9664\u8FD9\u4E2A\u4F1A\u8BDD\uFF1F\u65E5\u5FD7\u4F1A\u79FB\u5230 DSH \u7684 session-trash\uFF0C\u4E0D\u4F1A\u5F7B\u5E95\u62B9\u6389\u3002",
           "session.deleteFailed": "\u65E0\u6CD5\u5220\u9664\u8BE5\u4F1A\u8BDD\u3002",
           "session.deleteBusy": "\u8BE5\u4F1A\u8BDD\u6B63\u5728\u8FD0\u884C\u6216\u5DF2\u6253\u5F00\uFF0C\u8BF7\u5148\u5173\u95ED\u518D\u5220\u9664\u3002",
+          "session.deleteStale": "\u5BBF\u4E3B\u4ECD\u5728\u8FD0\u884C\u65E7\u7248\u672C\u63D2\u4EF6\uFF0C\u8BF7\u91CD\u542F DeepSeek Harness \u540E\u518D\u8BD5\u3002",
           "session.moveTo": "\u79FB\u52A8\u5230",
           "session.moveRoot": "\u5DE5\u4F5C\u533A\u6839\u76EE\u5F55",
           "session.actions": "\u4F1A\u8BDD\u64CD\u4F5C",
@@ -1755,10 +1757,18 @@ window.__ModuleLoader__.load({
                 return { placements: placementsNext };
               });
             }).catch((error) => {
-              console.warn("[workspace-tree] delete session failed", error);
+              const code = error && error.code || (error && error.name === "TypeError" ? "network" : "delete-failed");
+              console.warn("[workspace-tree] delete session failed", code, error);
               if (typeof window.alert !== "function") return;
-              const key = error && error.code === "session-busy" ? "session.deleteBusy" : "session.deleteFailed";
-              window.alert(t(key));
+              if (code === "session-busy") {
+                window.alert(t("session.deleteBusy"));
+                return;
+              }
+              if (code === "session-open") {
+                window.alert(t("session.deleteStale"));
+                return;
+              }
+              window.alert(t("session.deleteFailed") + " (" + code + ")");
             });
           };
           const forkSession = (sessionId) => {

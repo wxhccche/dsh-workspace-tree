@@ -32,6 +32,8 @@ export const en = {
     'Delete this session? Its log moves to the DSH session trash instead of being erased.',
   'session.deleteFailed': 'Could not delete this session.',
   'session.deleteBusy': 'This session is running or open. Close it before deleting it.',
+  'session.deleteStale': 
+    'The Host is still running an older build of this plugin. Restart DeepSeek Harness and try again.',
   'session.moveTo': 'Move to',
   'session.moveRoot': 'Workspace root',
   'session.actions': 'Session actions',
@@ -91,6 +93,7 @@ export const zh = {
   'session.deleteConfirm': '删除这个会话？日志会移到 DSH 的 session-trash，不会彻底抹掉。',
   'session.deleteFailed': '无法删除该会话。',
   'session.deleteBusy': '该会话正在运行或已打开，请先关闭再删除。',
+  'session.deleteStale': '宿主仍在运行旧版本插件，请重启 DeepSeek Harness 后再试。',
   'session.moveTo': '移动到',
   'session.moveRoot': '工作区根目录',
   'session.actions': '会话操作',
